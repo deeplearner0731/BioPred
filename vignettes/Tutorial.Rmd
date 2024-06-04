@@ -1,0 +1,317 @@
+---
+title: "BioPred Package Tutorial"
+author: "Zihuan Liu, 06/2024"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{BioPred Package Tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+```
+
+### Introduction 
+
+The R package **BioPred** offers a suite of tools for subgroup and biomarker analysis in precision medicine. Leveraging Extreme Gradient Boosting (XGBoost) along with propensity score weighting and A-learning methods, BioPred facilitates the optimization of individualized treatment rules (ITR) to streamline sub-group identification. BioPred also enables the identification of predictive biomarkers and obtaining their importance rankings. Moreover, the package provides graphical plots tailored for biomarker analysis. This tool enables clinical researchers seeking to enhance their understanding of biomarkers and patient population in drug development. 
+
+### Install from CRAN
+install.packages("BioPred")
+
+```{r, include = FALSE}
+library(knitr)
+library (kableExtra)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+
+### Loading the Data
+The **'tutorial_data'** dataset is included with the package. Let's load and inspect it:
+```{r echo=TRUE}
+library(BioPred)
+
+kable_styling(kable(x=head(tutorial_data), format="html", caption = "The first 6 subjects"),
+              bootstrap_options="striped",font_size=16)
+
+rownames(tutorial_data)=NULL
+```
+
+
+### Data Description
+The tutorial_data dataset contains the following columns:
+
+- **x1** to **x10**: Biomarker variables.
+- **y.con**: A continuous outcome variable.
+- **y.bin**: A binary outcome variable (0 or 1).
+- **y.month**: Time in months, used for survival analysis.
+- **y.event**: Event indicator (0 for censoring, 1 for event occurrence).
+- **subgroup_label**: Ground truth of subgroup label. In real-world scenarios, this information is typically unavailable.
+- **treatment**: Treatment indicator (0 for control, 1 for treatment).
+- **treatment_categorical**: Categorical treatment variable with levels "Placebo" and "Treatment".
+- **risk_category**: Risk category
+
+### 1 Example Analysis for Continuous Outcomes
+
+#### 1.1 Training the XGBoostSub_con Model
+
+We will begin by training the `XGBoostSub_con` model for a continuous outcome. This involves using the A-learning or Weight-learning loss function. Note that the treatment variable must be converted to (1, -1). If your treatment variable is (1, 0), you will need to convert it accordingly.
+
+```{r echo=TRUE}
+X_feature=tutorial_data[,c("x1", "x2" ,"x3" ,"x4","x5","x6","x7","x8","x9","x10")]
+y_label=tutorial_data$y.con
+# Convert treatment variable to (1 -1) format (1 for treatment, -1 for control)
+trt=ifelse(tutorial_data$treatment==1, 1, -1)
+true_label=tutorial_data$subgroup_label
+# Estimate the propensity score using logistic regression
+data_logit=tutorial_data[,c("treatment","x1", "x2" ,"x3" ,"x4" , "x5", "x6" , "x7","x8","x9","x10")]
+logit_model <- glm(treatment~ ., data = data_logit, family = binomial)
+pi <- predict(logit_model, type = "response")
+# Train the XGBoostSub_con model using the specified parameters
+model <- XGBoostSub_con(X_feature, y_label, trt ,pi,Loss_type = "A_learning", params = list(learning_rate = 0.005, max_depth = 1, lambda = 5, tree_method = 'hist'), nrounds = 200, disable_default_eval_metric = 0, verbose = FALSE)
+```
+
+
+After training the model, you can print the loss value at each epoch using the following code:
+
+```{r echo=TRUE}
+cat("Evaluation loss:\n")
+print(model$evaluation_log)
+```
+
+You can also evaluate the loss on independent datasets using the `eval_metric_con function`. In this example, we'll use the training data as test data for illustration purposes. However, you may use a new dataset to see the loss based on the trained model.
+
+```{r echo=TRUE}
+eval_metric_test <- eval_metric_con(model, X_feature, y_label, pi, trt, Loss_type = "A_learning")
+cat("Testing Evaluation Result:\n")
+print(eval_metric_test$value)
+
+```
+
+
+
+#### 1.2 Evaluating Predictive Biomarker Importance with XGBoostSub_con
+Next, we evaluate the importance of predictive biomarkers using the `predictive_biomarker_imp` function.
+
+```{r echo=TRUE}
+biomarker_imp=predictive_biomarker_imp(model)
+kable_styling(kable(x=biomarker_imp, format="html", caption = "Biomarker importance table"),
+              bootstrap_options="striped",font_size=16)
+```
+From the results, we observe that the most important predictive biomarker is `x2`.
+
+#### 1.3 Obtaining subgroup results with XGBoostSub_con
+
+You can obtain the subgroup results using the `get_subgroup_results` function.
+
+```{r echo=TRUE}
+subgroup_results=get_subgroup_results(model, X_feature, subgroup_label=true_label, cutoff = 0.5)
+kable_styling(kable(x=head(subgroup_results$assignment), format="html", caption = "The first 6 subjects subgroup assigentment"),
+              bootstrap_options="striped",font_size=16)
+cat("Prediction accuracy of true subgroup label:\n")
+cat(subgroup_results$acc)
+
+
+```
+Note that when using the `get_subgroup_results` function with real data, the true subgroup label is typically unknown. In such cases, set subgroup_label = NULL. This will return only the subgroup assignment without the prediction accuracy of the subgroup.
+
+
+
+
+#### 1.4 Commonly used subgroup/biomarker analysis tools
+
+Given that `x2` was identified as the most important predictive biomarker by `XGBoostSub_con`, we will use the `cdf_plot` function to evaluate the distribution of this biomarker by assessing the percentage of subjects falling within different cutoff values.
+
+
+
+
+```{r echo=TRUE,fig.height=6, fig.width=6}
+cdf_plot (xvar="x2", data=tutorial_data, y.int=5, xlim=NULL, xvar.display="Biomarker_X2", group=NULL)
+```
+
+We will also evaluate `x2` prognostic capability. To determine if this biomarker is prognostic, we can assess the association between the response variable `y.con` and the biomarker `x2` using the `scat_cont_plot` function.
+
+
+```{r echo=TRUE,fig.height=6, fig.width=8}
+scat_cont_plot(
+  yvar='y.con',
+  xvar='x2',
+  data=tutorial_data,
+  ybreaks = NULL,
+  xbreaks = NULL,
+  yvar.display = 'y',
+  xvar.display = "Biomarker_X2"
+)
+```
+
+Selecting the cutoff value for a predictive biomarker is important in clinical practice, as it can, for example, help enrich responders. We select the optimal cutoff for the identified biomarker `x2` from a list of candidate cutoff values using the `fixcut_con` function.
+
+```{r echo=TRUE,fig.height=6, fig.width=6}
+cutoff_result_con=fixcut_con(yvar='y.con', xvar="x2", dir=">", cutoffs=c(-0.1,-0.3,-0.5,0.1,0.3,0.5), data=tutorial_data, method="t.test", yvar.display='y.con', xvar.display='biomarker x2', vert.x=F)
+
+cutoff_result_con$fig
+
+```
+
+From the results, the optimal cutoff value is 0.5. Next, we define the biomarker positive group using a cutoff of 0.5. The biomarker positive group includes subjects with `x2` values less than or equal to 0.5, while the biomarker negative group includes subjects with x2 values greater than 0.5. We first use the `cut_perf()` function to evaluate the performance between the biomarker positive and negative groups. 
+
+```{r echo=TRUE}
+res=cut_perf (yvar="y.con", censorvar=NULL, xvar="x2", cutoff=c(0.5), dir="<=", xvars.adj=NULL, data=tutorial_data, type='c', yvar.display='y.con', xvar.display="biomarker x2")
+kable_styling(kable(x=res$comp.res.display[,-2:-4], format="html", caption = "Performace at optimal cutoff"),
+              bootstrap_options="striped",font_size=16)
+
+```
+
+Next, we will further assess the predictive model performance by examining the differences between the treatment and control groups within both the biomarker positive and negative groups.
+
+```{r echo=TRUE,fig.height=10, fig.width=15}
+tutorial_data$biogroup=ifelse(tutorial_data$x2<=0.5,'biomarker_positive','biomarker_negative')
+
+res = subgrp_perf_pred(yvar="y.time", censorvar="y.event", grpvar="biogroup", grpname=c("biomarker_positive",'biomarker_negative'),trtvar="treatment_categorical", trtname=c("Placebo" , "Treatment"), xvars.adj=NULL,data=tutorial_data, type="s")
+kable_styling(kable(x=res$group.res.display, format="html", caption = "BioSubgroup Stat"),
+              bootstrap_options="striped",font_size=16)
+res$fig
+
+```
+From the Kaplan-Meier (KM) curve, a difference between the treatment and control groups is observed in the biomarker positive group. This difference is not observed in the biomarker negative group, validating that biomarker `x2` identified by XGBoostSub_con is predictive.
+
+
+
+
+
+### 2 Example Analysis for Binary Outcomes
+
+#### 2.1 Train the XGBoostSub_bin Model 
+Similar to training the `XGBoostSub_con` model for continuous outcomes, we can also train the `XGBoostSub_bin` model for binary outcomes.
+
+```{r echo=TRUE}
+y_label=tutorial_data$y.bin
+model <- XGBoostSub_bin(X_feature, y_label, trt ,pi,Loss_type = "A_learning", params = list(learning_rate = 0.01, max_depth = 1, lambda = 5, tree_method = 'hist'), nrounds = 300, disable_default_eval_metric = 0, verbose = FALSE)
+```
+
+
+#### 2.2 Predictive biomarker importance 
+```{r echo=TRUE}
+biomarker_imp=predictive_biomarker_imp(model)
+kable_styling(kable(x=biomarker_imp, format="html", caption = "Biomarker importance table"),
+              bootstrap_options="striped",font_size=16)
+```
+Based on the results, biomarker `x10` emerges as the most important biomarker. 
+
+
+#### 2.3 Get subgroup results
+
+```{r echo=TRUE}
+subgroup_results=get_subgroup_results(model, X_feature, subgroup_label=true_label, cutoff = 0.5)
+kable_styling(kable(x=head(subgroup_results$assignment), format="html", caption = "The first 6 subjects subgroup assigentment"),
+              bootstrap_options="striped",font_size=16)
+cat("Prediction accuracy of true subgroup label:\n")
+cat(subgroup_results$acc)
+```
+Users can freely tune the parameters in the XGBoostSub-based models to enhance the performance of identifying true subgroups. In this example, we provide a random parameter setting for illustration purposes. However, when applying this model to real data, the ground truth labels are unknown, which means you may not be able to tune the parameters based on prediction accuracy.
+
+#### 2.4 Post-Hoc analysis based on subgroup and biomarker results
+
+Continuing our assessment, we aim to determine whether the identified biomarker is prognostic or not. To do so, we examine the association between the binary response variable `y.bin` and biomarker `x10`.
+
+
+```{r echo=TRUE,fig.height=6, fig.width=6}
+roc_bin_plot (yvar='y.bin', xvars="x10", dirs="auto", data=tutorial_data, yvar.display='y.bin', xvars.display="Biomarker x10")
+```
+
+The association between the binary response variable `y.bin` and biomarker `x2`, identified as the second most important biomarker by the `XGBoostSub_bin` model, is shown below.
+
+```{r echo=TRUE,fig.height=6, fig.width=6}
+roc_bin_plot (yvar='y.bin', xvars="x2", dirs="auto", data=tutorial_data, yvar.display='y.bin', xvars.display="Biomarker x2")
+```
+
+We select the optimal cutoff of identified biomarker `x10` from a candidate list of cutoff values This capability is particularly valuable for companion diagnostics (CDx) development when working with a limited set of candidate cutoffs (e.g., IHC).
+
+```{r echo=TRUE,fig.height=6, fig.width=9}
+cutoff_result_bin=fixcut_bin (yvar='y.bin', xvar="x10", dir=">", cutoffs=c(-0.1,-0.3,-0.5,0.1,0.3,0.5), data=tutorial_data, method="Fisher", yvar.display='Response_Y', xvar.display='Biomarker_X10', vert.x=F)
+cutoff_result_bin$fig
+```
+Here, users can select the optimal cutoff based on various metrics such as sensitivity, specificity, PPV (Positive Predictive Value), and NPV (Negative Predictive Value). The choice of metric depends on the specific research context. For instance, if the goal is to enrich responders, focusing on PPV might be more appropriate. Based on the highest PPV value, users can then select the optimal cutoff.
+
+
+If accuracy is our primary concern, the optimal cutoff value is 0.5. In this case, we define the biomarker positive group using a cutoff of 0.5. This group comprises subjects with `x10` values greater than or equal to 0.5, while the biomarker negative group consists of subjects with `x10` values less than 0.5. To assess the performance between the biomarker positive and negative groups, we initially employ the `cut_perf` function.
+
+
+```{r echo=TRUE}
+res=cut_perf (yvar="y.con", censorvar=NULL, xvar="x10", cutoff=c(0.5), dir=">", xvars.adj=NULL, data=tutorial_data, type='c', yvar.display='y.con', xvar.display="biomarker x2")
+kable_styling(kable(x=res$comp.res.display[,-2:-4], format="html", caption = "caption"),
+              bootstrap_options="striped",font_size=16)
+
+```
+
+
+Next, the `subgrp_perf_pred` function will provide the predictive model performance based on the defined subgroup.
+
+```{r echo=TRUE,fig.height=10, fig.width=15}
+tutorial_data$biogroup=ifelse(tutorial_data$x10>0.5,'biomarker_positive','biomarker_negative')
+
+res = subgrp_perf_pred(yvar="y.time", censorvar="y.event", grpvar="biogroup", grpname=c("biomarker_positive",'biomarker_negative'),trtvar="treatment_categorical", trtname=c("Placebo" , "Treatment"), xvars.adj=NULL,data=tutorial_data, type="s")
+kable_styling(kable(x=res$group.res.display, format="html", caption = "BioSubgroup Stat"),
+              bootstrap_options="striped",font_size=16)
+res$fig
+
+```
+From the KM curve, it appears that 0.5 for `X10` may not be the optimal cutoff. Further evaluation using the `fixcut_bin` function with different candidate optimal cutoffs is suggested.
+
+
+
+
+
+### 3 Example Analysis for time-to-event outcome
+
+#### 3.1 Train the XGBoostSub_sur model
+```{r echo=TRUE}
+# Prepare the data for training the XGBoostSub_sur
+y_label=tutorial_data$y.time
+delta=tutorial_data$y.event
+
+# Train the XGBoostSub_sur model using the specified parameters
+model <- XGBoostSub_sur(X_feature, y_label, trt ,pi,delta,Loss_type = "A_learning", params=list(learning_rate = 0.005, max_depth = 1,lambda = 9, gamma=1, min_child_weight=1,
+max_bin=128, tree_method = 'exact',subsample=0.8), nrounds = 250, disable_default_eval_metric = 1, verbose = FALSE)
+```
+
+#### 3.1 Predictive biomarker importance using XGBoostSub_sur
+```{r echo=TRUE}
+biomarker_imp=predictive_biomarker_imp(model)
+kable_styling(kable(x=biomarker_imp, format="html", caption = "Biomarker importance table"),
+              bootstrap_options="striped",font_size=16)
+```
+
+#### 3.2 Get subgroup results based on XGBoostSub_sur
+
+```{r echo=TRUE}
+subgroup_results=get_subgroup_results(model, X_feature, subgroup_label=true_label, cutoff = 0.5)
+kable_styling(kable(x=head(subgroup_results$assignment), format="html", caption = "The first 6 subjects subgroup assigentment"),
+              bootstrap_options="striped",font_size=16)
+cat("Prediction accuracy of true subgroup label:\n")
+cat(subgroup_results$acc)
+```
+
+
+
+
+### 4. Other functions for biomarker analysis in clinical practice
+
+Subgroup analysis often involves dividing subjects into different groups based on categorical variables, such as baseline characteristics or genetic mutation variables. In this package, we provide the cat_summary function to summarize these categorical variables. For example, in the tutorial dataset, there is a variable called `risk_category`, which takes values like High Risk, Intermediate Risk, and Low Risk. First, we use this function to determine the distribution of subjects in each subgroup. 
+```{r echo=TRUE,fig.height=10, fig.width=10}
+res = cat_summary(yvar="risk_category", yname=c("High Risk","Intermediate Risk" ,"Low Risk"), xvars="treatment_categorical", xname.list=list(c("Placebo" , "Treatment")), data=tutorial_data)
+
+kable_styling(kable(x=res$cont.display, format="html", caption = "Contingency Table"),
+              bootstrap_options="striped",font_size=16)
+```
+Then, we can also visualize the KM curves based on predefined risk groups and treatment/control groups using the `subgrp_perf_pred` function.
+```{r echo=TRUE,fig.height=10, fig.width=15}
+res = subgrp_perf_pred(yvar="y.time", censorvar="y.event", grpvar="risk_category", grpname=c("High Risk","Intermediate Risk" ,"Low Risk"),trtvar="treatment_categorical", trtname=c("Placebo" , "Treatment"), xvars.adj=NULL,data=tutorial_data, type="s")
+kable_styling(kable(x=res$group.res.display, format="html", caption = "Subgroup Stat"),
+              bootstrap_options="striped",font_size=16)
+res$fig
+```
