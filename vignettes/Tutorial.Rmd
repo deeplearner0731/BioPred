@@ -20,8 +20,8 @@ knitr::opts_chunk$set(
 
 The R package **BioPred** offers a suite of tools for subgroup and biomarker analysis in precision medicine. Leveraging Extreme Gradient Boosting (XGBoost) along with propensity score weighting and A-learning methods, BioPred facilitates the optimization of individualized treatment rules (ITR) to streamline sub-group identification. BioPred also enables the identification of predictive biomarkers and obtaining their importance rankings. Moreover, the package provides graphical plots tailored for biomarker analysis. This tool enables clinical researchers seeking to enhance their understanding of biomarkers and patient population in drug development. 
 
-### Install from CRAN
-install.packages("BioPred")
+### Install from GitHub
+install_github("deeplearner0731/BioPred")
 
 ```{r, include = FALSE}
 library(knitr)
