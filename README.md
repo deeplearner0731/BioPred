@@ -8,6 +8,7 @@ You can install the `BioPred` package from GitHub using the `devtools` package. 
 ```r
 install.packages("devtools")
 devtools::install_github("deeplearner0731/BioPred")
+```
 ## Main Functions
 
 - `BioPred()`: Main function for fitting predictive models.
