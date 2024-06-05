@@ -18,10 +18,10 @@ gam_ctr_plot(
   ybreaks = NULL,
   xbreaks = NULL,
   rugcol.var = NULL,
-  link.scale = T,
-  prt.sum = T,
-  prt.chk = F,
-  outlier.rm = F
+  link.scale = TRUE,
+  prt.sum = TRUE,
+  prt.chk = FALSE,
+  outlier.rm = FALSE
 )
 }
 \arguments{

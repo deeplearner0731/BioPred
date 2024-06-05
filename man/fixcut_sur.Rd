@@ -14,7 +14,7 @@ fixcut_sur(
   method = "logrank",
   yvar.display = yvar,
   xvar.display = xvar,
-  vert.x = F
+  vert.x = FALSE
 )
 }
 \arguments{

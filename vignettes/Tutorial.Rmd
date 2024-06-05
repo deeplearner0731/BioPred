@@ -23,11 +23,18 @@ The R package **BioPred** offers a suite of tools for subgroup and biomarker ana
 ### Install from GitHub
 install_github("deeplearner0731/BioPred")
 
+### Install from CRAN
+install.packages("BioPred")
+
 ```{r, include = FALSE}
 library(knitr)
 library (kableExtra)
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 ```
+
+
+
+
 
 
 ### Loading the Data

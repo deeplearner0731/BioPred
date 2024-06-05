@@ -14,15 +14,15 @@ gam_plot(
   data,
   k,
   pred.type = "iterms",
-  link.scale = T,
+  link.scale = TRUE,
   title = "Trend Plot",
   ybreaks = NULL,
   xbreaks = NULL,
   rugcol.var = NULL,
-  add.points = F,
-  prt.sum = T,
-  prt.chk = F,
-  outlier.rm = F,
+  add.points = FALSE,
+  prt.sum = TRUE,
+  prt.chk = FALSE,
+  outlier.rm = FALSE,
   newdat = NULL
 )
 }

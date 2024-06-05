@@ -8,7 +8,7 @@ Authors@R: c(
     person("Yan", "Sun", , "yan.sun@abbvie.com", role = "aut"),
     person("Xin","Huang", , "xin.huang@abbvie.com", role = "aut"))
 Maintainer: Zihuan Liu <zihuan.liu@abbvie.com>
-Description: Provides functions for training extreme gradient boosting model using propensity score A-learning and weight-learning methods.
+Description: Provides functions for training extreme gradient boosting model using propensity score A-learning and weight-learning methods. For details on the A-learning and weight-learning methods, see Chen et al. (2017) <doi:10.1111/biom.12676>.
 Encoding: UTF-8
 Language: en
 License: GPL-3
@@ -22,7 +22,7 @@ Imports:
     mgcv,
     onewaytests,
     car
-RoxygenNote: 7.3.0
+RoxygenNote: 7.3.1
 Suggests: 
     knitr,
     rmarkdown,
@@ -32,4 +32,3 @@ NeedsCompilation: no
 Depends: 
     R (>= 4.0.0)
 LazyData: true
-

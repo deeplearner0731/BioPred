@@ -13,7 +13,7 @@ fixcut_bin(
   method = "Fisher",
   yvar.display = yvar,
   xvar.display = xvar,
-  vert.x = F
+  vert.x = FALSE
 )
 }
 \arguments{

@@ -13,7 +13,7 @@ fixcut_con(
   method = "t.test",
   yvar.display = yvar,
   xvar.display = xvar,
-  vert.x = F
+  vert.x = FALSE
 )
 }
 \arguments{

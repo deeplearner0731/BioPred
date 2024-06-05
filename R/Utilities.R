@@ -386,8 +386,8 @@ scat_cont_plot = function(yvar, xvar, data, ybreaks=NULL, xbreaks=NULL, yvar.dis
 #' @import mgcv
 #' @export
 gam_plot = function(yvar, censorvar=NULL, xvar, xvars.adj=NULL, sxvars.adj=NULL, type, data, k,
-                    pred.type="iterms", link.scale=T, title="Trend Plot", ybreaks=NULL, xbreaks=NULL,
-                    rugcol.var=NULL, add.points=F, prt.sum=T, prt.chk=F, outlier.rm=F, newdat=NULL){
+                    pred.type="iterms", link.scale=TRUE, title="Trend Plot", ybreaks=NULL, xbreaks=NULL,
+                    rugcol.var=NULL, add.points=FALSE, prt.sum=TRUE, prt.chk=FALSE, outlier.rm=FALSE, newdat=NULL){
   x=NULL
   yfit=NULL
   yfit.Lo=NULL
@@ -601,7 +601,7 @@ gam_plot = function(yvar, censorvar=NULL, xvar, xvars.adj=NULL, sxvars.adj=NULL,
 #' @export
 gam_ctr_plot = function(yvar, censorvar=NULL, xvar, xvars.adj=NULL, sxvars.adj=NULL, trtvar=NULL, type,
                         data, k, title="Group Contrast", ybreaks=NULL, xbreaks=NULL, rugcol.var=NULL,
-                        link.scale=T, prt.sum=T, prt.chk=F, outlier.rm=F){
+                        link.scale=TRUE, prt.sum=TRUE, prt.chk=FALSE, outlier.rm=FALSE){
    x=NULL
    yfit=NULL
    yfit.Lo=NULL
@@ -791,7 +791,7 @@ gam_ctr_plot = function(yvar, censorvar=NULL, xvar, xvars.adj=NULL, sxvars.adj=N
 #'         and a ggplot object for visualization.
 #' @import PropCIs
 #' @export
-fixcut_bin = function(yvar, xvar, dir, cutoffs, data, method="Fisher", yvar.display=yvar, xvar.display=xvar, vert.x=F){
+fixcut_bin = function(yvar, xvar, dir, cutoffs, data, method="Fisher", yvar.display=yvar, xvar.display=xvar, vert.x=FALSE){
   Cutoff=NULL
   Value=NULL
   Measure=NULL
@@ -983,7 +983,7 @@ fixcut_bin = function(yvar, xvar, dir, cutoffs, data, method="Fisher", yvar.disp
 #' @return A list containing statistical summaries, selected cutoff statistics, selected cutoff value, group statistics,
 #'         and a ggplot object for visualization.
 #' @export
-fixcut_con <- function(yvar, xvar, dir, cutoffs, data, method="t.test", yvar.display=yvar, xvar.display=xvar, vert.x=F) {
+fixcut_con <- function(yvar, xvar, dir, cutoffs, data, method="t.test", yvar.display=yvar, xvar.display=xvar, vert.x=FALSE) {
   Cutoff <- NULL
   Mean <- NULL
   Group <- NULL
@@ -1014,7 +1014,7 @@ fixcut_con <- function(yvar, xvar, dir, cutoffs, data, method="t.test", yvar.dis
     }
 
     fml <- stats::as.formula(paste(yvar, "~ Group"))
-    ttest <- try(stats::t.test(fml, data = data, alternative = "two.sided", mu = 0, paired = FALSE, var.equal = FALSE, conf.level = 0.95), silent = TRUE)
+    ttest <- try(stats::t.test(fml, data = data, alternative = "two.sided", mu = 0, var.equal = FALSE, conf.level = 0.95), silent = TRUE)
 
     if (!inherits(ttest, "try-error")) {
       pval.t <- ttest$p.value
@@ -1191,7 +1191,7 @@ fixcut_con <- function(yvar, xvar, dir, cutoffs, data, method="t.test", yvar.dis
 #' @return A list containing statistical summaries, selected cutoff statistics, selected cutoff value, group statistics,
 #'         and a ggplot object for visualization.
 #' @export
-fixcut_sur = function(yvar, censorvar, xvar, dir, cutoffs, data, method="logrank", yvar.display=yvar, xvar.display=xvar, vert.x=F){
+fixcut_sur = function(yvar, censorvar, xvar, dir, cutoffs, data, method="logrank", yvar.display=yvar, xvar.display=xvar, vert.x=FALSE){
   Cutoff=NULL
   HR.Lo=NULL
   HR.Up=NULL
