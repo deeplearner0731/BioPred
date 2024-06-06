@@ -11,9 +11,9 @@ devtools::install_github("deeplearner0731/BioPred")
 ```
 ## Main Functions
 
-- `BioPred()`: Main function for fitting predictive models.
-- `predict()`: Function to make predictions based on the fitted model.
-- `plot()`: Function to visualize the model and results.
+- `XGBoostSub_con()`: Function for Training XGBoost Model with Customized Loss Function (A-loss and Weight-loss) for continuous outcomes.
+- `XGBoostSub_bin()`: Function for Training XGBoost Model with Customized Loss Function (A-loss and Weight-loss) for binary outcomes.
+- `XGBoostSub_sur()`: Function for Training XGBoost Model with Customized Loss Function (A-loss and Weight-loss) for time-to-event outcomes.
 - `fixcut_con()`: Function to fix cutoff values and perform statistical tests.
 
 ## Dependencies
@@ -28,8 +28,8 @@ The `BioPred` package depends on the following R packages:
 - `survival`
 - `mgcv`
 - `survminer`
-- 'onewaytests'
-- 'car'
+- `onewaytests`
+- `car`
 Make sure to install these packages before using `BioPred`.
 
 ## Author
