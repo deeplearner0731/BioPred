@@ -14,8 +14,24 @@ devtools::install_github("deeplearner0731/BioPred")
 - `XGBoostSub_con()`: Function for Training XGBoost Model with Customized Loss Function (A-loss and Weight-loss) for continuous outcomes.
 - `XGBoostSub_bin()`: Function for Training XGBoost Model with Customized Loss Function (A-loss and Weight-loss) for binary outcomes.
 - `XGBoostSub_sur()`: Function for Training XGBoost Model with Customized Loss Function (A-loss and Weight-loss) for time-to-event outcomes.
-- `fixcut_con()`: Function to fix cutoff values and perform statistical tests.
-
+- `eval_metric_con() `: Function for Evaluating XGBoostSub_con Model Performance.
+- `eval_metric_bin() `: Function for Evaluating XGBoostSub_bin Model Performance.
+- `eval_metric_sur() `: Function for Evaluating XGBoostSub_sur Model Performance.
+- `predictive_biomarker_imp() `: This function calculates and plots the importance of biomarkers in a trained XGBoostSub_con, XGBoostSub_bin or XGBoostSub_sur model.
+- `get_subgroup_results() `: This function predicts the treatment assignment for each patient based on a cutoff value.
+- `cdf_plot() `: Cumulative Distribution Function (CDF) plot for a biomarker.
+- `roc_bin() `: AUC ROC Table for Biomarkers Associated with Binary Outcomes.
+- `roc_bin_plot() `: Generates ROC plots for different biomarkers associated with binary outcomes.
+- `scat_cont_plot() `: Scatter Plot for a Biomarker Associated with Continuous Outcome.
+- `gam_plot() `: Generates a generalized additive model (GAM) plot for exploring the relationship between a response variable and a biomarker.
+- `gam_ctr_plot() `: Computes and plots the contrasts between treatment and control group based on a GAM for exploring the relationship between treatment benefit and biomarker.
+- `fixcut_con() `:This function conducts fixed cutoff analysis for individual biomarker associated with continuous outcome variables.
+- `fixcut_bin() `: This function conducts fixed cutoff analysis for individual biomarker associated with binary outcome variables.
+- `fixcut_sur() `: This function conducts fixed cutoff analysis for individual biomarker associated with time-to-event  outcome variables.
+- `cut_perf() `: This function evaluates the performance of a predictive model at a selected cutoff point.
+- `cat_summary() `: This function provides a summary of categorical biomarkers in a dataset.
+- `subgrp_perf_pred() `: This function evaluates the performance of subgroups based on different types of response variables in predictive cases.
+- `subgrp_perf() `: This function evaluates subgroup performance based on different types of response variables.
 ## Dependencies
 
 The `BioPred` package depends on the following R packages:
