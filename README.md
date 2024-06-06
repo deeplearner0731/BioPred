@@ -9,6 +9,12 @@ You can install the `BioPred` package from GitHub using the `devtools` package. 
 install.packages("devtools")
 devtools::install_github("deeplearner0731/BioPred")
 ```
+You can also install `BioPred` package from CRAN
+
+```r
+install.packages("BioPred")
+```
+
 ## Main Functions
 
 - `XGBoostSub_con()`: Function for Training XGBoost Model with Customized Loss Function (A-loss and Weight-loss) for continuous outcomes.
@@ -46,6 +52,7 @@ The `BioPred` package depends on the following R packages:
 - `survminer`
 - `onewaytests`
 - `car`
+- 
 Make sure to install these packages before using `BioPred`.
 
 ## Author
@@ -53,7 +60,7 @@ Make sure to install these packages before using `BioPred`.
 This package is maintained by Zihuan Liu. For any queries or issues, please contact me at <zihuan.liu@abbvie.com>.
 
 ## License
-This package is licensed under the GPL-3 License. See the LICENSE file for more details.
+This package is licensed under the GPL-3 License.
 
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request with your changes. Make sure to follow the coding guidelines and document your code appropriately.
