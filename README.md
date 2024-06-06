@@ -55,9 +55,11 @@ The `BioPred` package depends on the following R packages:
 - 
 Make sure to install these packages before using `BioPred`.
 
-## Example Plot
+## Workflow
 
 ![Example Plot](man/figures/README-unnamed-chunk.png)
+
+This plot illustrates an example of analysis and visualization tools using the BioPred R package. “Biomarker +” denotes the biomarker-positive subpopulation, where the biomarker value meets the cutoff or other criteria, while “Biomarker –” signifies the biomarker-negative subpopulation, where the biomarker value does not meet the respective criteria.
 
 ## Author
 
