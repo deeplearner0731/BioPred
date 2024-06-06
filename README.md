@@ -63,7 +63,11 @@ This plot illustrates an example of analysis and visualization tools using the B
 
 ## Author
 
-This package is maintained by Zihuan Liu. For any queries or issues, please contact me at <zihuan.liu@abbvie.com>.
+This package is maintained by Zihuan Liu, Yan Sun, and Xin Huang. For any queries or issues, please contact us at:
+
+- Zihuan Liu: <zihuan.liu@abbvie.com>
+- Yan Sun: <yan.sun@abbvie.com>
+- Xin Huang: <xin.huang@abbvie.com>
 
 ## License
 This package is licensed under the GPL-3 License.
