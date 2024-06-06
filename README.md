@@ -20,10 +20,16 @@ devtools::install_github("deeplearner0731/BioPred")
 
 The `BioPred` package depends on the following R packages:
 
+- `pROC`
 - `ggplot2`
-- `dplyr`
-- `stats`
-
+- `PropCIs`
+- `xgboost`
+- `pROC`
+- `survival`
+- `mgcv`
+- `survminer`
+- 'onewaytests'
+- 'car'
 Make sure to install these packages before using `BioPred`.
 
 ## Author
