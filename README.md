@@ -52,7 +52,7 @@ The `BioPred` package depends on the following R packages:
 - `survminer`
 - `onewaytests`
 - `car`
-- 
+  
 Make sure to install these packages before using `BioPred`.
 
 ## Workflow
