@@ -42,7 +42,6 @@ install.packages("BioPred")
 
 The `BioPred` package depends on the following R packages:
 
-- `pROC`
 - `ggplot2`
 - `PropCIs`
 - `xgboost`
