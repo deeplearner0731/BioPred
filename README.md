@@ -55,6 +55,10 @@ The `BioPred` package depends on the following R packages:
 - 
 Make sure to install these packages before using `BioPred`.
 
+## Example Plot
+
+![Example Plot](man/figures/README-unnamed-chunk.png)
+
 ## Author
 
 This package is maintained by Zihuan Liu. For any queries or issues, please contact me at <zihuan.liu@abbvie.com>.
