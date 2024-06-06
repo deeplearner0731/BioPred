@@ -52,3 +52,12 @@ Make sure to install these packages before using `BioPred`.
 
 This package is maintained by Zihuan Liu. For any queries or issues, please contact me at <zihuan.liu@abbvie.com>.
 
+## License
+This package is licensed under the GPL-3 License. See the LICENSE file for more details.
+
+## Contributing
+Contributions are welcome! Please fork the repository and submit a pull request with your changes. Make sure to follow the coding guidelines and document your code appropriately.
+
+## Acknowledgments
+Special thanks to all contributors and the open-source community for their invaluable support.
+
