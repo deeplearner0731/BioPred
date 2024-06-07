@@ -14,7 +14,7 @@ Alternatively, you can install the BioPred package from CRAN:
 ```r
 install.packages("BioPred")
 ```
-For more information and vignettes, you can visit the CRAN package page and the vignettes page.
+For more information and vignettes, you can visit the [CRAN package](https://cran.r-project.org/web/packages/BioPred/index.html/) and the [Vignettes page](https://cran.r-project.org/web/packages/BioPred/vignettes/Tutorial.html/).
 ## Main Functions
 
 - `XGBoostSub_con()`: Function for Training XGBoost Model with Customized Loss Function (A-loss and Weight-loss) for continuous outcomes.
