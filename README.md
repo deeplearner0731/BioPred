@@ -7,6 +7,9 @@ You can install the `BioPred` package from GitHub using the `devtools` package. 
 
 ```r
 install.packages("devtools")
+```
+Then, install BioPred from GitHub:
+```r
 devtools::install_github("deeplearner0731/BioPred")
 ```
 Alternatively, you can install the BioPred package from CRAN:
