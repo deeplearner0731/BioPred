@@ -9,12 +9,12 @@ You can install the `BioPred` package from GitHub using the `devtools` package. 
 install.packages("devtools")
 devtools::install_github("deeplearner0731/BioPred")
 ```
-You can also install `BioPred` package from CRAN
+Alternatively, you can install the BioPred package from CRAN:
 
 ```r
 install.packages("BioPred")
 ```
-
+For more information and vignettes, you can visit the CRAN package page and the vignettes page.
 ## Main Functions
 
 - `XGBoostSub_con()`: Function for Training XGBoost Model with Customized Loss Function (A-loss and Weight-loss) for continuous outcomes.
